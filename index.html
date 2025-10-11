@@ -2,24 +2,35 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog CLP</title>
+    <title>Alive</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/style.css">
+    
 
 </head>
 <body>
-    <h4> Playlist Raphael </h4>
-    <img src="/capa/zero.jpg"></img>
-    <p>Nome da Musica</p>
-    <p>Nome da Banda</p>
-    <p>Barra de Progresso</p>
-    <div>Botão de embaralhar</div>
-    <div>Voltar Musica</div>
-    <div><i class="bi bi-play-circle-fill"></i>
-</div>
-    <div>Avançar musica</div>
-    <div>Repetir</div>
-
+    <div class="music-container">
+        <h4 id="playlist-title"> Playlist </h4>
+        <img id="cover"  src="/capas de disco/novo.jpg" width="550" height="550" >
+        <div id="below-cover">
+            <div id="song-info">
+                <div id="song-name">Nome da Musica</div>
+                <div id="band-name" class="light-color">Nome da Banda</div>
+            </div>
+            
+            <div id="like" class="button light-color"><i class="bi bi-heart"></i></div>
+        </div>
+        <div>Barra de Progresso</div>
+        <div id="button-container">
+            <div id="shuffle" class="button"><i class="bi bi-shuffle"></i></div>
+            <div id="previous" class="button button-navigate"><i class="bi bi-skip-backward-circle"></i></div>
+            <div id="play" class="button button-biggest"><i class="bi bi-play-circle-fill"  ></i></div>
+            <div id="next" class="button button-navigate"><i class="bi bi-skip-forward-circle"></i></div>
+            <div id="repeat" class="button"><i class="bi bi-repeat"></i></div>
+        </div>
+    </div>
     
 </body>
 </html>
