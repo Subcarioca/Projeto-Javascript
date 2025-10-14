@@ -1,0 +1,173 @@
+{
+  "playlists": [
+  {
+    "name": "Sons da Natureza",
+    "songs": [
+      {
+        "id": "6",
+        "name": "Whispers of the Forest",
+        "artist": "xxxxx",
+        "cover": "./imgs/tartaruga.png",
+        "song": "/musicas/Forest.mp3",
+        "genre": "Ambient",
+        "bpm": 80
+      },
+      {
+        "id": "7",
+        "name": "Reflection by the Lake",
+        "artist": "xxxxx",
+        "cover": "./imgs/pinguim.png",
+        "song": "/musicas/Lake.mp3",
+        "genre": "Acoustic",
+        "bpm": 95
+      }
+    ]
+  }, 
+  {
+    "name": "Trilhas Sonoras Épicas",
+    "songs": [
+      {
+        "id": "3",
+        "name": "Impossible",
+        "artist": "xxxxx",
+        "cover": "./imgs/Impossible.jpeg",
+        "song": "/musicas/Impossible.mp3",
+        "genre": "Orchestral",
+        "bpm": 200
+      },
+      {
+        "id": "4",
+        "name": "It's Going Down Now",
+        "artist": "xxxxx",
+        "cover": "./imgs/pistola.png",
+        "song": "/musicas/P3R.mp3",
+        "genre": "J-Rock",
+        "bpm": 155
+      },
+      {
+        "id": "5",
+        "name": "Golden Wind",
+        "artist": "xxxxx",
+        "cover": "./imgs/ouro.png",
+        "song": "/musicas/FightingGold.mp3",
+        "genre": "J-Pop",
+        "bpm": 180
+      }
+    ]
+  },
+  {
+    "name": "JoJo's Bizarre Adventure",
+    "songs": [
+      {
+        "id": "1",
+        "name": "Fighting Gold",
+        "artist": "xxxxx",
+        "cover": "./imgs/ouro.png",
+        "song": "/musicas/FightingGold.mp3",
+        "genre": "J-Rock",
+        "bpm": 180
+      },
+      {
+        "id": "2",
+        "name": "Pillar Men Theme",
+        "artist": "xxxxx",
+        "cover": "./imgs/pillar.png",
+        "song": "/musicas/Pillar.mp3",
+        "genre": "Electronic",
+        "bpm": 130
+      }
+    ]
+  },
+  {
+    "name": "Mix Rockzão",
+    "songs": [
+      {
+        "id": "8",
+        "name": "A little faster",
+        "artist": "xxxxx",
+        "cover": "./imgs/Alittlefaster.jpeg",
+        "song": "/musicas/Alittlefaster.mp3",
+        "genre": "Rock",
+        "bpm": 180
+      },
+      {
+        "id": "9",
+        "name": "Faint",
+        "artist": "xxxxx",
+        "cover": "./imgs/Faint.jpeg",
+        "song": "/musicas/Faint.mp3",
+        "genre": "Rock",
+        "bpm": 180
+      },
+      {
+        "id": "10",
+        "name": "Crawling",
+        "artist": "xxxxx",
+        "cover": "./imgs/Crawling.jpeg",
+        "song": "/musicas/Crawling.mp3",
+        "genre": "Rock",
+        "bpm": 200
+      }
+    ]
+  },
+  {
+    "name": "Playlist Aleatória",
+    "songs": [
+      {
+        "id": "11",
+        "name": "Calm Waters",
+        "artist": "xxxxx",
+        "cover": "./imgs/pinguim.png",
+        "song": "/musicas/Lake.mp3",
+        "genre": "New Age",
+        "bpm": 80
+      },
+      {
+        "id": "12",
+        "name": "Blue",
+        "artist": "xxxxx",
+        "cover": "./imgs/Blue.jpeg",
+        "song": "/musicas/Blue.mp3",
+        "genre": "Acid Jazz",
+        "bpm": 80
+      },
+      {
+        "id": "13",
+        "name": "Awaken (Remix)",
+        "artist": "xxxxx",
+        "cover": "./imgs/pillar.png",
+        "song": "/musicas/Pillar.mp3",
+        "genre": "Trap",
+        "bpm": 80
+      },
+      {
+        "id": "14",
+        "name": "Forest Ambience",
+        "artist": "xxxxx",
+        "cover": "./imgs/tartaruga.png",
+        "song": "/musicas/Forest.mp3",
+        "genre": "Ambient",
+        "bpm": 80
+      },
+      {
+        "id": "15",
+        "name": "KissKiss",
+        "artist": "xxxxx",
+        "cover": "./imgs/KissKiss.jpeg",
+        "song": "/musicas/KissKiss.mp3",
+        "genre": "J-Rock",
+        "bpm": 120
+      },
+      {
+        "id": "16",
+        "name": "GimmeThat",
+        "artist": "xxxxx",
+        "cover": "./imgs/GimmeThat.jpeg",
+        "song": "/musicas/GimmeThat.mp3",
+        "genre": "J-Rock",
+        "bpm": 180
+      }
+    ]
+  }
+]
+}

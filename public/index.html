@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Player</title>
+    <meta name="description" content="A versão definitiva de um music player perfeitamente responsivo.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-layer" id="bg-layer-1"></div>
+    <div class="background-layer" id="bg-layer-2"></div>
+
+    <header class="top-header">
+        <div class="theme-switcher">
+            <input type="checkbox" id="dark-mode-toggle-desktop">
+            <label for="dark-mode-toggle-desktop" class="toggle-label"></label>
+        </div>
+        <h1 class="now-playing-title">Now Playing</h1>
+    </header>
+
+    <main class="music-container">
+        <div class="artwork-wrapper">
+            <img id="cover-bg" class="cover" src="./imgs/tartaruga.png" alt="Capa do Álbum de fundo" crossorigin="anonymous">
+            <img id="cover-fg" class="cover" alt="Capa do Álbum em transição" crossorigin="anonymous">
+        </div>
+        <div class="compact-artwork-wrapper">
+             <img id="compact-cover" src="./imgs/tartaruga.png" alt="Capa do Álbum" crossorigin="anonymous">
+        </div>
+
+        <div class="player-content-wrapper">
+            <section id="song-info">
+                <div class="song-info-text">
+                    <h2 id="song-name">Nome da Música</h2>
+                    <p id="artist-name">Nome do Artista</p>
+                </div>
+            </section>
+
+            <section id="progress-container" aria-label="Barra de progresso da música">
+                <div id="progress-bar">
+                    <div id="current-progress"></div>
+                </div>
+                <div id="time-container">
+                    <span id="current-time">0:00</span>
+                    <span id="total-duration">0:00</span>
+                </div>
+            </section>
+
+            <div class="bottom-controls-wrapper">
+                <section id="main-buttons">
+                    <button id="shuffle" class="button button-secondary" title="Aleatório (S)"><i class="bi bi-shuffle"></i></button>
+                    <button id="previous" class="button button-navigate" title="Anterior (J)"><i class="bi bi-skip-backward-fill"></i></button>
+                    <button id="play" class="button button-biggest" title="Tocar/Pausar (Espaço)"><i class="bi bi-play-circle-fill"></i></button>
+                    <button id="next" class="button button-navigate" title="Próxima (L)"><i class="bi bi-skip-forward-fill"></i></button>
+                    <button id="repeat" class="button button-secondary" title="Repetir (R)"><i class="bi bi-repeat"></i></button>
+                </section>
+
+                <div class="extra-controls-container">
+                    <button id="song-menu-button" class="button button-extra" aria-label="Abrir fila"><i class="bi bi-list-ul"></i></button>
+                    <section id="volume-container">
+                        <button id="volume-icon" class="button" title="Mudo (M)"><i class="bi bi-volume-down-fill"></i></button>
+                        <div id="volume-slider-wrapper">
+                            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.1">
+                        </div>
+                         <span id="volume-percentage">10%</span>
+                    </section>
+                    <button id="playlist-menu-button" class="button button-extra" aria-label="Abrir playlists"><i class="bi bi-music-note-list"></i></button>
+                    <div class="theme-switcher">
+                        <input type="checkbox" id="dark-mode-toggle-mobile">
+                        <label for="dark-mode-toggle-mobile" class="toggle-label"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <audio id="audio" src=""></audio>
+    </main>
+    
+    <canvas id="audio-visualizer" class="visualizer"></canvas>
+    <div id="drawer-overlay" class="drawer-overlay"></div>
+    <div id="song-drawer" class="drawer-container">
+        <div class="drawer-header"><h3>Fila de Reprodução</h3><button id="close-song-button" class="button"><i class="bi bi-x-lg"></i></button></div>
+        <div id="song-list" class="drawer-list"></div>
+    </div>
+
+    <div id="playlist-drawer" class="drawer-container">
+        <div class="drawer-header"><h3>Playlists</h3><button id="close-playlist-button" class="button"><i class="bi bi-x-lg"></i></button></div>
+        <div id="playlist-list" class="drawer-list"></div>
+    </div>
+
+    <script src="projetoclp.js"></script>
+</body>
+</html>
