@@ -1,4 +1,3 @@
-// Arquivo: server.js (Refatorado para SQLite)
 
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
@@ -16,6 +15,18 @@ const db = new sqlite3.Database(dbPath, (err) => {
     console.log('Conectado ao banco de dados SQLite.');
   }
 });
+
+
+
+
+
+require('dotenv').config();
+const fetch = require('node-fetch');
+const { OpenAI } = require('openai');
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+
+
 
 
 // Serve os arquivos estáticos da pasta 'public'
@@ -103,6 +114,38 @@ app.get('/api/songs', (req, res) => {
 
         res.json(songs);
     });
+});
+
+
+// Endpoint para obter curiosidades sobre uma música
+app.get('/api/curiosities', async (req, res) => {
+  const { name, artist } = req.query;
+
+  if (!name || !artist) {
+    return res.status(400).json({ error: 'Nome e artista da música são obrigatórios.' });
+  }
+
+  try {
+    const prompt = `Liste 3 curiosidades interessantes, verificáveis e curtas sobre a música "${name}" do artista "${artist}".`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: "Você é um assistente de música que responde apenas com fatos e curiosidades verificáveis sobre canções." },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.7,
+    });
+
+    const curiosities = completion.choices[0].message.content
+      .split(/\d+\.\s*/g)
+      .filter(text => text.trim() !== '');
+
+    res.json({ name, artist, curiosities });
+  } catch (error) {
+    console.error('Erro ao obter curiosidades:', error);
+    res.status(500).json({ error: 'Erro ao buscar curiosidades sobre a música.' });
+  }
 });
 
 

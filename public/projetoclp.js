@@ -34,6 +34,9 @@ const UIElements = {
     playlistDrawer: document.getElementById('playlist-drawer'),
     playlistList: document.getElementById('playlist-list'),
     closePlaylistButton: document.getElementById('close-playlist-button'),
+    songMenuButton: document.getElementById('song-menu-button'),
+    playlistMenuButton: document.getElementById('playlist-menu-button'),
+    curiosityButton: document.getElementById('curiosity-button'),
 };
 
 const colorThief = new ColorThief();
@@ -78,6 +81,88 @@ function startPulse(bpm) {
         }, intervalTime);
     }
 }
+
+//i.a
+function mostrarCuriosidades(musica) {
+    const curiositiesDiv = document.getElementById('curiosities');
+
+    const fecharCaixa = () => {
+        // 1. Inicia a animação de deslizar para fora da tela
+        curiositiesDiv.classList.remove('visible');
+        
+        // 2. Espera a animação (0.5s) terminar e SÓ ENTÃO esconde de verdade.
+        setTimeout(() => {
+             // Adiciona a classe hidden (display: none)
+             curiositiesDiv.classList.add('hidden'); 
+             curiositiesDiv.innerHTML = ''; // Limpa o conteúdo
+        }, 550); // 50ms a mais que o tempo de transição (0.5s) para segurança.
+    };
+
+    const attachCloseListener = () => {
+        const closeButton = document.getElementById('close-curiosities');
+        
+        // Clonar e substituir para garantir que não haja listeners duplicados
+        const newCloseButton = closeButton.cloneNode(true);
+        closeButton.parentNode.replaceChild(newCloseButton, closeButton);
+
+        if (newCloseButton) {
+            newCloseButton.addEventListener('click', fecharCaixa);
+        }
+    };
+
+    // 1. Lógica de Toggle (Fecha se estiver visível)
+    if (curiositiesDiv.classList.contains('visible')) {
+        fecharCaixa();
+        return; 
+    }
+
+    // 2. Lógica de Abertura: Remove 'hidden' e adiciona 'visible'
+    curiositiesDiv.classList.remove('hidden'); 
+    curiositiesDiv.classList.add('visible');
+    curiositiesDiv.innerHTML = `
+        <button id="close-curiosities" class="button"><i class="bi bi-x-lg"></i></button>
+        <p style="text-align: center;">... IA buscando curiosidades sobre ${musica.name} ...</p>`;
+    
+    attachCloseListener(); // Listener para o estado de Carregando
+
+    const { name, artist } = musica;
+
+    // 3. Chamada ao Backend (sem mudanças na lógica de fetch/API)
+    fetch(`/api/curiosities?name=${encodeURIComponent(name)}&artist=${encodeURIComponent(artist)}`)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`Erro HTTP: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data.curiosities && data.curiosities.length > 0) {
+                // Conteúdo final (Sucesso)
+                curiositiesDiv.innerHTML = `
+                    <button id="close-curiosities" class="button"><i class="bi bi-x-lg"></i></button>
+                    <div style="padding-top: 1rem;">
+                        ${data.curiosities
+                            .map(c => {
+                                const cleanText = c.trim().replace(/^[\d\-\*\.\s]*/, '');
+                                return cleanText ? `<p>🤖 ${cleanText}</p>` : '';
+                            })
+                            .join('')}
+                    </div>`;
+            } else {
+                // Conteúdo final (Dados vazios)
+                curiositiesDiv.innerHTML = `<button id="close-curiosities" class="button"><i class="bi bi-x-lg"></i></button><p style="text-align: center;">❌ Não foi possível carregar curiosidades. (Dados vazios)</p>`;
+            }
+            attachCloseListener(); // Listener para o estado de Sucesso/Vazio
+        })
+        .catch(err => {
+            // Conteúdo final (Erro)
+            console.error('Erro ao buscar curiosidades (Geral):', err);
+            curiositiesDiv.innerHTML = `<button id="close-curiosities" class="button"><i class="bi bi-x-lg"></i></button><p style="text-align: center;">⚠️ Erro de comunicação. Verifique o console do servidor e do navegador. (${err.message})</p>`;
+            
+            attachCloseListener(); // Listener para o estado de Erro
+        });
+}
+
 
 function stopPulse() {
     clearInterval(pulseInterval);
@@ -550,6 +635,13 @@ async function start() {
     UIElements.closeSongButton.addEventListener('click', () => toggleDrawer(null, false));
     UIElements.closePlaylistButton.addEventListener('click', () => toggleDrawer(null, false));
     UIElements.drawerOverlay.addEventListener('click', () => toggleDrawer(null, false));
+    
+    UIElements.curiosityButton.addEventListener('click', () => {
+        const currentSong = playlist[playerState.currentSongIndex];
+        if (currentSong) {
+            mostrarCuriosidades(currentSong);
+        }
+    });
 
     try {
         const response = await fetch('/api/playlists');

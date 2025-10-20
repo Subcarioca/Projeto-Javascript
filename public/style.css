@@ -32,7 +32,6 @@ body {
     justify-content: center;
     align-items: center;
     padding: clamp(1.5rem, 5vmin, 3rem);
-    overflow: hidden;
     position: relative;
     background-color: var(--gradient-end);
     transition: color 1.2s ease-in-out, background-color 0.1s ease-out; 
@@ -264,4 +263,69 @@ body.pulse-effect {
     
     .drawer-container { width: 100%; height: 85vh; max-height: 60rem; bottom: 0; top: auto; left: 0; right: auto; border-radius: 1.5rem 1.5rem 0 0; transform: translateY(100%); }
     .drawer-container.visible { transform: translateY(0); }
+}
+
+/* Ia chat */
+.curiosities-box {
+    /* Posição Fixa no Rodapé */
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    
+    /* Configuração de Tamanho */
+    width: clamp(30rem, 90vw, 40rem); /* Responsivo */
+    max-height: 45vh; /* Aumentei um pouco a altura máxima */
+
+    /* Estilização Dinâmica (Combina com o tema) */
+    background-color: var(--compact-bg); /* Fundo semi-transparente, como o player */
+    color: var(--text-primary-dynamic); /* Cor de texto principal (branco/claro) */
+    backdrop-filter: blur(12px); /* Aumentei o blur para maior efeito */
+    border-radius: 1.5rem 1.5rem 0 0;
+    box-shadow: 0 -1rem 3rem var(--shadow-color); /* Sombra mais sutil */
+    padding: 1.5rem 2rem; /* Ajuste no padding */
+    z-index: 1000; /* Garante que fique acima de todos os elementos */
+
+    /* Animação e Esconder/Mostrar (Lógica de esconder a caixa) */
+    transform: translateX(-50%) translateY(100%); 
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    overflow-y: auto;
+}
+
+/* Classe que é adicionada via JS para MOSTRAR a caixa */
+.curiosities-box.visible {
+    transform: translateX(-50%) translateY(0); /* Desliza para a posição visível */
+}
+.curiosities-box.hidden {
+    display: none;
+    pointer-events: none; 
+}
+
+/* Estilização do Botão de Fechar */
+#close-curiosities {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    /* Usa as classes de botão que você já tem */
+    background: none;
+    color: var(--text-secondary-dynamic);
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+#close-curiosities:hover {
+    color: var(--active-green);
+}
+
+/* Estilização dos parágrafos de curiosidades */
+.curiosities-box p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* Estilo para a área de conteúdo (padding interno) */
+.curiosities-box > div {
+    padding-top: 1rem; /* Garante que o conteúdo não cubra o botão de fechar */
 }
