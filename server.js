@@ -1,4 +1,5 @@
 
+
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
@@ -16,18 +17,25 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-
-
-
-
+// --- INÍCIO DA ATUALIZAÇÃO PARA O GEMINI ---
 require('dotenv').config();
 const fetch = require('node-fetch');
-const { OpenAI } = require('openai');
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// 1. Removido: const { OpenAI } = require('openai');
+// 2. Adicionado: Pacote do Google Generative AI
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-
-
+// 3. Removido: const openai = new OpenAI(...)
+// 4. Adicionado: Inicialização do cliente Gemini
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({
+  model: "gemini-2.5-flash", // Modelo atualizado, mais rápido e estável
+  systemInstruction: "Você é um assistente de música que responde apenas com fatos e curiosidades verificáveis sobre canções. Responda apenas com a lista de curiosidades, numeradas com '1.', '2.', '3.'.",
+  generationConfig: {
+    temperature: 0.7,
+  }
+});
+// --- FIM DA ATUALIZAÇÃO PARA O GEMINI ---
 
 // Serve os arquivos estáticos da pasta 'public'
 app.use(express.static(path.join(__dirname, 'public')));
@@ -128,20 +136,21 @@ app.get('/api/curiosities', async (req, res) => {
   try {
     const prompt = `Liste 3 curiosidades interessantes, verificáveis e curtas sobre a música "${name}" do artista "${artist}".`;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: "Você é um assistente de música que responde apenas com fatos e curiosidades verificáveis sobre canções." },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.7,
-    });
-
-    const curiosities = completion.choices[0].message.content
-      .split(/\d+\.\s*/g)
+    // --- LÓGICA DA API ATUALIZADA ---
+    // 5. Chamada da API alterada de OpenAI para Gemini
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    
+    // 6. Lógica de parsing mantida, pois o systemInstruction do Gemini foi
+    //    configurado para formatar a resposta de forma similar.
+    const curiosities = text
+      .split(/\d+\.\s*/g) // Divide por "1. ", "2. ", etc.
       .filter(text => text.trim() !== '');
 
     res.json({ name, artist, curiosities });
+    // --- FIM DA LÓGICA DA API ATUALIZADA ---
+
   } catch (error) {
     console.error('Erro ao obter curiosidades:', error);
     res.status(500).json({ error: 'Erro ao buscar curiosidades sobre a música.' });
