@@ -26,9 +26,19 @@
             <label for="dark-mode-toggle-desktop" class="toggle-label"></label>
         </div>
         <h1 class="now-playing-title">Now Playing</h1>
+
+
     </header>
 
     <main class="music-container">
+        <section class="search-bar-container">
+    <input type="text" id="search-input" placeholder="Buscar música ou artista na web..." aria-label="Buscar música na web">
+    <button id="search-button" class="button"><i class="bi bi-search"></i></button>
+        </section>
+    <div class="player-content">
+    </div>
+
+
         <div class="artwork-wrapper">
             <img id="cover-bg" class="cover" src="./imgs/tartaruga.png" alt="Capa do Álbum de fundo" crossorigin="anonymous">
             <img id="cover-fg" class="cover" alt="Capa do Álbum em transição" crossorigin="anonymous">
@@ -83,6 +93,7 @@
             </div>
         </div>
         <audio id="audio" src=""></audio>
+        
     </main>
     <div id="curiosities" class="curiosities-box hidden"></div>
     
@@ -97,6 +108,14 @@
         <div class="drawer-header"><h3>Playlists</h3><button id="close-playlist-button" class="button"><i class="bi bi-x-lg"></i></button></div>
         <div id="playlist-list" class="drawer-list"></div>
     </div>
+    <div id="search-results-drawer" class="drawer-container">
+    <div class="drawer-header">
+        <h3>Resultados da Web</h3>
+        <button id="close-search-button" class="button"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div id="search-results-list" class="drawer-list">
+        </div>
+</div>
 
     <script src="projetoclp.js"></script>
 </body>

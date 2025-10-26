@@ -158,6 +158,54 @@ app.get('/api/curiosities', async (req, res) => {
 });
 
 
+
+
+// Endpoint ÚNICO para pesquisar música na API do Deezer
+app.get('/api/search_music', async (req, res) => {
+  const { query } = req.query;
+
+  if (!query) {
+    return res.status(400).json({ error: 'Termo de pesquisa é obrigatório.' });
+  }
+
+  console.log(`🔍 Buscando músicas no Deezer para: ${query}`);
+
+  try {
+    const fetch = (await import('node-fetch')).default;
+    const url = `https://api.deezer.com/search?q=${encodeURIComponent(query)}`;
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Node.js Server)"
+      }
+    });
+    const data = await response.json();
+
+    if (!data.data || data.data.length === 0) {
+      console.log("Nenhum resultado encontrado para:", query);
+      return res.json([]);
+    }
+
+    // Mapeia o formato para o frontend
+    const results = data.data.slice(0, 10).map(track => ({
+      name: track.title,
+      artist: track.artist.name,
+      cover: track.album?.cover_medium || track.album?.cover || "",
+      preview_url: track.preview || "",
+      deezer_url: track.link,
+      genre: track.genre_id || "Desconhecido",
+      bpm: null
+    }));
+
+    res.json(results);
+  } catch (error) {
+    console.error("Erro ao buscar músicas na API Deezer:", error);
+    res.status(500).json({ error: "Erro ao buscar músicas na Deezer." });
+  }
+});
+
+
+
+
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });

@@ -37,7 +37,21 @@ const UIElements = {
     songMenuButton: document.getElementById('song-menu-button'),
     playlistMenuButton: document.getElementById('playlist-menu-button'),
     curiosityButton: document.getElementById('curiosity-button'),
+
+        // NEW: Elementos de Pesquisa
+    searchInput: document.getElementById('search-input'),
+    searchButton: document.getElementById('search-button'),
+    searchResultsDrawer: document.getElementById('search-results-drawer'),
+    searchResultsList: document.getElementById('search-results-list'),
+    closeSearchButton: document.getElementById('close-search-button'),
+    drawerOverlay: document.getElementById('drawer-overlay'), // Certifique-se que o overlay está referenciado
+
+    // NEW: Player de Áudio Auxiliar para Prévias
+    previewAudio: new Audio() // Cria um novo elemento <audio> em JS
 };
+
+// Variável para rastrear a URL de prévia atual
+let currentPreviewUrl = null;
 
 const colorThief = new ColorThief();
 let allPlaylists = [];
@@ -162,6 +176,160 @@ function mostrarCuriosidades(musica) {
             attachCloseListener(); // Listener para o estado de Erro
         });
 }
+
+//Pesquisa musica teste
+function togglePreview(button, url) {
+    if (!url) {
+        alert('Prévia indisponível para esta música.');
+        return;
+    }
+
+    const isPlaying = UIElements.previewAudio.src === url && !UIElements.previewAudio.paused;
+
+    // Pausa qualquer coisa que esteja tocando
+    UIElements.previewAudio.pause();
+
+    // Restaura todos os ícones para 'play'
+    document.querySelectorAll('.preview-button i').forEach(icon => {
+        icon.className = 'bi bi-play-fill';
+    });
+
+    if (isPlaying) {
+        // Se estava tocando, apenas restauramos o ícone e paramos.
+        button.querySelector('i').className = 'bi bi-play-fill';
+        currentPreviewUrl = null;
+    } else {
+        // Toca o novo URL
+        UIElements.previewAudio.src = url;
+        UIElements.previewAudio.play().catch(e => console.error("Erro ao tocar prévia:", e));
+        button.querySelector('i').className = 'bi bi-pause-fill';
+        currentPreviewUrl = url;
+
+        // Pausa a prévia após 30 segundos ou quando terminar
+        UIElements.previewAudio.onended = () => {
+             button.querySelector('i').className = 'bi bi-play-fill';
+             currentPreviewUrl = null;
+        };
+    }
+}
+
+
+
+
+
+async function searchAndDisplayResults(query) {
+    if (!query.trim()) return;
+
+    // Animação de carregamento (opcional: mudar ícone do botão)
+    UIElements.searchButton.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+
+    try {
+        const response = await fetch(`/api/search_music?query=${encodeURIComponent(query)}`);
+        const results = await response.json();
+
+        UIElements.searchResultsList.innerHTML = ''; // Limpa resultados anteriores
+
+        if (results.length === 0) {
+            UIElements.searchResultsList.innerHTML = '<p class="drawer-info-text" style="padding: 1rem;">Nenhuma música encontrada na web.</p>';
+        } else {
+            results.forEach(song => {
+                const resultItem = createSearchResultItem(song);
+                UIElements.searchResultsList.appendChild(resultItem);
+            });
+        }
+
+        openSearchResultsDrawer();
+
+    } catch (error) {
+        console.error('Erro na pesquisa de música:', error);
+        UIElements.searchResultsList.innerHTML = '<p class="drawer-info-text" style="padding: 1rem;">Erro ao buscar músicas.</p>';
+    } finally {
+        UIElements.searchButton.innerHTML = '<i class="bi bi-search"></i>'; // Restaura o ícone
+    }
+}
+
+// Função auxiliar para criar o elemento de resultado
+function createSearchResultItem(song) {
+    const item = document.createElement('div');
+    item.className = 'search-result-item';
+    item.innerHTML = `
+        <img src="${song.cover}" alt="${song.name}" class="search-result-item-cover">
+        <div class="search-result-item-info">
+            <span class="song-title">${song.name}</span>
+            <span class="artist-name">${song.artist}</span>
+        </div>
+        <div class="search-result-item-actions">
+            <button class="button button-extra preview-button" data-preview-url="${song.preview_url}" aria-label="Tocar prévia"><i class="bi bi-play-fill"></i></button>
+            <button class="button button-extra add-button" data-song-data='${JSON.stringify(song)}' aria-label="Adicionar à playlist"><i class="bi bi-plus-lg"></i></button>
+        </div>
+    `;
+
+    // Adiciona listeners para os botões de Ação
+    item.querySelector('.preview-button').addEventListener('click', (e) => {
+        e.stopPropagation(); // Previne o clique no item pai
+        togglePreview(e.currentTarget, song.preview_url);
+    });
+
+    item.querySelector('.add-button').addEventListener('click', (e) => {
+        e.stopPropagation();
+        addSongToDatabase(song);
+    });
+
+    return item;
+}
+
+async function addSongToDatabase(song) {
+    // Prepara os dados para o endpoint POST
+    const data = {
+        name: song.name,
+        artist: song.artist,
+        cover: song.cover,
+        // IMPORTANTE: Aqui estamos usando a URL de prévia como o caminho da música (song_path)
+        // Lembre-se que essa URL é temporária/limitada (preview), para uso real, 
+        // você precisaria baixar o arquivo ou usar um serviço de streaming.
+        song: song.preview_url, 
+        genre: song.genre,
+        bpm: song.bpm
+    };
+
+    try {
+        const response = await fetch('/api/add_song', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert(`"${song.name}" de ${song.artist} adicionada com sucesso à playlist!`);
+
+        try {
+            const res = await fetch('/api/playlists');
+            allPlaylists = await res.json();
+            if (allPlaylists.length > 0) {
+                playlist = allPlaylists[0].songs;
+                populateSongList();
+                updateActivePlaylistButton();
+            }
+            } catch (e) {
+        console.error("Erro ao recarregar playlists:", e);
+        }
+
+        } else {
+            const errorData = await response.json();
+            alert(`Erro ao adicionar música: ${errorData.error}`);
+        }
+    } catch (error) {
+        console.error('Erro ao adicionar música:', error);
+        alert('Erro de conexão ao adicionar a música.');
+    }
+}
+
+
+
+
+
 
 
 function stopPulse() {
@@ -560,6 +728,23 @@ function toggleDrawer(type, forceState) {
     }
 }
 
+// Função para abrir o drawer
+function openSearchResultsDrawer() {
+    UIElements.searchResultsDrawer.classList.add('visible');
+    UIElements.drawerOverlay.classList.add('visible');
+}
+
+// Função para fechar o drawer
+function closeSearchResultsDrawer() {
+    UIElements.searchResultsDrawer.classList.remove('visible');
+    UIElements.drawerOverlay.classList.remove('visible');
+    // Para a prévia se estiver tocando
+    UIElements.previewAudio.pause();
+    currentPreviewUrl = null;
+}
+
+
+
 function setupMediaSession() {
     if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', play);
@@ -636,11 +821,40 @@ async function start() {
     UIElements.closePlaylistButton.addEventListener('click', () => toggleDrawer(null, false));
     UIElements.drawerOverlay.addEventListener('click', () => toggleDrawer(null, false));
     
-    UIElements.curiosityButton.addEventListener('click', () => {
+   UIElements.curiosityButton.addEventListener('click', () => {
         const currentSong = playlist[playerState.currentSongIndex];
         if (currentSong) {
             mostrarCuriosidades(currentSong);
         }
+    });
+
+    // ------------------------------------------------------------------
+    // NEW: ADICIONAR LISTENERS DE PESQUISA AQUI
+    // ------------------------------------------------------------------
+    
+    // 1. Listener para o botão de pesquisa
+    UIElements.searchButton.addEventListener('click', () => {
+        const query = UIElements.searchInput.value;
+        searchAndDisplayResults(query);
+    });
+
+    // 2. Listener para a tecla Enter no campo de pesquisa
+    UIElements.searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = UIElements.searchInput.value;
+            searchAndDisplayResults(query);
+        }
+    });
+    
+    // 3. Listener para fechar o drawer de resultados de pesquisa
+    UIElements.closeSearchButton.addEventListener('click', closeSearchResultsDrawer);
+    // Adicione o listener para parar a prévia se o player principal começar a tocar
+    UIElements.audio.addEventListener('play', () => {
+        UIElements.previewAudio.pause();
+        // Restaura o ícone de todos os botões de prévia
+         document.querySelectorAll('.preview-button i').forEach(icon => {
+            icon.className = 'bi bi-play-fill';
+        });
     });
 
     try {

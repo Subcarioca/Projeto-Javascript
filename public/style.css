@@ -329,3 +329,98 @@ body.pulse-effect {
 .curiosities-box > div {
     padding-top: 1rem; /* Garante que o conteúdo não cubra o botão de fechar */
 }
+
+/* --- NEW: Estilos para a Barra de Pesquisa --- */
+.search-bar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 2rem;
+    gap: 0.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#search-input {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border-radius: 2rem;
+    border: 2px solid var(--progress-bar-bg);
+    background: var(--compact-bg);
+    color: var(--text-primary-dynamic);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#search-input::placeholder {
+    color: var(--text-secondary-dynamic);
+}
+
+#search-input:focus {
+    border-color: var(--active-green);
+}
+
+#search-button {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    /* Reusa estilos de .button */
+}
+
+/* Estilo para o item de resultado de pesquisa, que será semelhante ao drawer-item */
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--progress-bar-bg);
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    gap: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.search-result-item-info {
+    flex-grow: 1;
+    min-width: 0; /* Permite que o texto seja truncado */
+}
+
+.search-result-item-info .song-title {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary-dynamic);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-result-item-info .artist-name {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary-dynamic);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-result-item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.search-result-item-cover {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
